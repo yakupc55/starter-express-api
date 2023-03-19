@@ -1,7 +1,21 @@
-const express = require('express')
-const app = express()
-app.all('/', (req, res) => {
-    console.log("Just got a request!")
-    res.send('Yo!')
+var app = require('express')();
+var http = require('http').Server(app);
+var io =  require('socket.io')(http);
+var port =  3001;
+
+app.get('/',function(req,res){
+    res.send("youtube videosu");
+});
+
+io.on('connection',(socket)=>{
+    console.log("connection is success");
+
+    socket.on('send_data',(data)=>{
+        socket.broadcast.emit('push_data',data);
+        console.log(data);
+    })
 })
-app.listen(process.env.PORT || 3000)
+
+http.listen(port,function (){
+console.log(`server is running : http://localhost:${port}`);
+});
