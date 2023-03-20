@@ -1,21 +1,14 @@
-var app = require('express')();
-var http = require('http').Server(app);
-var io =  require('socket.io')(http);
-var port =  3001;
+var ws = require('ws');
 
-app.get('/',function(req,res){
-    res.send("youtube videosu");
-});
+var server = new ws.Server({port:3000})
 
-io.on('connection',(socket)=>{
-    console.log("connection is success");
-
-    socket.on('send_data',(data)=>{
-        socket.broadcast.emit('push_data',data);
+server.on('connection', server => {
+    server.on('message',message => {
+        let data=  JSON.parse(message);
         console.log(data);
-    })
-})
-
-http.listen(port,function (){
-console.log(`server is running : http://localhost:${port}`);
+    });
+    server.on('close',(code,reason)=> {
+        console.log(code,reason);
+    });
+server.send(JSON.stringify({"test":"test"}));
 });
